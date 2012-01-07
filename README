@@ -1,0 +1,1 @@
+BeautifulSoupPlus is a BeautifulSoup mirror with extensions.  The first extension is an indentWidth setting for specifying output indentation in the `prettify` function.
