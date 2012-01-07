@@ -542,6 +542,8 @@ class Tag(PageElement):
         self.convertXMLEntities = parser.convertXMLEntities
         self.escapeUnrecognizedEntities = parser.escapeUnrecognizedEntities
 
+        self.indentWidth = parser.indentWidth
+
         # Convert any HTML, XML, or numeric entities in the attribute values.
         convert = lambda(k, val): (k,
                                    re.sub("&(#\d+|#x[0-9a-fA-F]+|\w+);",
@@ -749,7 +751,7 @@ class Tag(PageElement):
         indentTag, indentContents = 0, 0
         if prettyPrint:
             indentTag = indentLevel
-            space = (' ' * (indentTag-1))
+            space = (self.indentWidth * (indentTag-1))
             indentContents = indentTag + 1
         contents = self.renderContents(encoding, prettyPrint, indentContents)
         if self.hidden:
@@ -810,7 +812,7 @@ class Tag(PageElement):
                 text = text.strip()
             if text:
                 if prettyPrint:
-                    s.append(" " * (indentLevel-1))
+                    s.append(self.indentWidth * (indentLevel-1))
                 s.append(text)
                 if prettyPrint:
                     s.append("\n")
@@ -1079,7 +1081,8 @@ class BeautifulStoneSoup(Tag, SGMLParser):
 
     def __init__(self, markup="", parseOnlyThese=None, fromEncoding=None,
                  markupMassage=True, smartQuotesTo=XML_ENTITIES,
-                 convertEntities=None, selfClosingTags=None, isHTML=False):
+                 convertEntities=None, selfClosingTags=None, isHTML=False,
+                 indentWidth=' '):
         """The Soup object is initialized as the 'root tag', and the
         provided markup (which can be a string or a file-like object)
         is fed into the underlying parser.
@@ -1111,6 +1114,7 @@ class BeautifulStoneSoup(Tag, SGMLParser):
         self.convertEntities = convertEntities
         # Set the rules for how we'll deal with the entities we
         # encounter
+        self.indentWidth = indentWidth
         if self.convertEntities:
             # It doesn't make sense to convert encoded characters to
             # entities even while you're converting entities to Unicode.
